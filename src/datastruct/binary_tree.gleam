@@ -1,39 +1,26 @@
 import gleam/list
-import gleam/option.{type Option, None, Some}
 
-pub type Node {
-  Node(
-    data: Float,
-    left: Option(Node),
-    right: Option(Node),
-    parent: Option(Node),
-  )
+pub type Tree {
+  None
+  Node(data: Float, left: Tree, right: Tree)
 }
 
-pub type TreeWalkOrder {
-  PreOrder
-  InOrder
-  PostOrder
-}
-
-pub fn insert(root: Option(Node), data: Float) -> Option(Node) {
-  case root {
-    None -> Some(Node(data: data, left: None, right: None, parent: None))
-    Some(node) -> {
-      case node.data >=. data {
-        True ->
-          Some(Node(node.data, insert(node.left, data), node.right, Some(node)))
-        False ->
-          Some(Node(node.data, node.left, insert(node.right, data), Some(node)))
+pub fn insert(tree: Tree, new_data: Float) -> Tree {
+  case tree {
+    None -> Node(data: new_data, left: None, right: None)
+    Node(data, left, right) -> {
+      case new_data <=. data {
+        True -> Node(data, insert(left, new_data), right)
+        False -> Node(data, left, insert(right, new_data))
       }
     }
   }
 }
 
-pub fn to_list(root: Option(Node)) -> List(Float) {
-  case root {
+pub fn to_list(tree: Tree) -> List(Float) {
+  case tree {
     None -> []
-    Some(Node(data, left, right, _parent)) -> {
+    Node(data, left, right) -> {
       list.concat([to_list(left), [data], to_list(right)])
     }
   }

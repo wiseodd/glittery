@@ -1,12 +1,11 @@
-import datastruct/binary_tree.{type Node}
+import datastruct/binary_tree
 import gleam/float
 import gleam/io
 import gleam/list
-import gleam/option.{type Option, None}
 
 pub fn main() {
-  let tree: Option(Node) =
-    None
+  let tree: binary_tree.Tree =
+    binary_tree.None
     |> binary_tree.insert(6.0)
     |> binary_tree.insert(5.0)
     |> binary_tree.insert(7.0)
