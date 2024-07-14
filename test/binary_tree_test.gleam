@@ -1,44 +1,58 @@
-import datastruct/binary_tree.{type Tree}
-import gleam/io
+import datastruct/bst.{type Tree}
 import gleeunit/should
+
+fn get_tree() -> Tree {
+  bst.None
+  |> bst.insert(6.0)
+  |> bst.insert(5.0)
+  |> bst.insert(7.0)
+  |> bst.insert(2.0)
+  |> bst.insert(5.0)
+  |> bst.insert(8.0)
+}
 
 pub fn insert_test() {
   let tree: Tree =
-    binary_tree.None
-    |> binary_tree.insert(6.0)
-    |> binary_tree.insert(5.0)
-    |> binary_tree.insert(7.0)
+    bst.None
+    |> bst.insert(6.0)
+    |> bst.insert(5.0)
+    |> bst.insert(7.0)
 
-  tree |> should.not_equal(binary_tree.None)
+  tree |> should.not_equal(bst.None)
 
-  io.debug(tree)
   case tree {
-    binary_tree.Node(data, left, right) -> {
-      should.equal(data, 6.0)
+    bst.Node(key, left, right) -> {
+      should.equal(key, 6.0)
 
       case left {
-        binary_tree.Node(left_data, _, _) -> should.equal(left_data, 5.0)
-        binary_tree.None -> should.fail()
+        bst.Node(left_key, _, _) -> should.equal(left_key, 5.0)
+        bst.None -> should.fail()
       }
 
       case right {
-        binary_tree.Node(right_data, _, _) -> should.equal(right_data, 7.0)
-        binary_tree.None -> should.fail()
+        bst.Node(right_key, _, _) -> should.equal(right_key, 7.0)
+        bst.None -> should.fail()
       }
     }
-    binary_tree.None -> should.fail()
+    bst.None -> should.fail()
   }
 }
 
 pub fn inorder_tree_walk_test() {
-  let tree: Tree =
-    binary_tree.None
-    |> binary_tree.insert(6.0)
-    |> binary_tree.insert(5.0)
-    |> binary_tree.insert(7.0)
-    |> binary_tree.insert(2.0)
-    |> binary_tree.insert(5.0)
-    |> binary_tree.insert(8.0)
+  let tree = get_tree()
+  bst.to_list(tree) |> should.equal([2.0, 5.0, 5.0, 6.0, 7.0, 8.0])
+}
 
-  binary_tree.to_list(tree) |> should.equal([2.0, 5.0, 5.0, 6.0, 7.0, 8.0])
+pub fn find_test() {
+  let tree = get_tree()
+
+  case bst.find(tree, 7.0) {
+    bst.Node(key, _, _) -> key |> should.equal(7.0)
+    bst.None -> should.fail()
+  }
+
+  case bst.find(tree, 10.0) {
+    bst.Node(_, _, _) -> should.fail()
+    bst.None -> should.be_true(True)
+  }
 }
